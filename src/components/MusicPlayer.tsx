@@ -5,19 +5,30 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Music, Volume2, VolumeX, Play, Pause } from "lucide-react";
 
 export default function MusicPlayer() {
-  // Always show prompt on page load
   const [showPrompt, setShowPrompt] = useState(true);
   const [isPlaying, setIsPlaying] = useState(false);
   const [hasAnswered, setHasAnswered] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const handlePlayMusic = () => {
-    if (audioRef.current) {
-      audioRef.current.play().then(() => {
+    const audio = audioRef.current;
+    if (audio) {
+      // Direct user-gesture call for iOS Safari compatibility
+      audio.muted = false;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            setIsPlaying(true);
+          })
+          .catch((err) => {
+            console.warn("iOS Safari playback retry:", err);
+            // Fallback retry
+            audio.play().then(() => setIsPlaying(true)).catch(() => setIsPlaying(false));
+          });
+      } else {
         setIsPlaying(true);
-      }).catch((err) => {
-        console.log("Audio playback error:", err);
-      });
+      }
     }
     setShowPrompt(false);
     setHasAnswered(true);
@@ -33,28 +44,39 @@ export default function MusicPlayer() {
   };
 
   const togglePlayPause = () => {
-    if (!audioRef.current) return;
+    const audio = audioRef.current;
+    if (!audio) return;
+
     if (isPlaying) {
-      audioRef.current.pause();
+      audio.pause();
       setIsPlaying(false);
     } else {
-      audioRef.current.play().then(() => {
+      audio.muted = false;
+      const playPromise = audio.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch((err) => console.warn("Toggle play error:", err));
+      } else {
         setIsPlaying(true);
-      }).catch((err) => {
-        console.log("Audio play error:", err);
-      });
+      }
     }
   };
 
   return (
     <>
-      {/* HTML5 Audio Element */}
+      {/* HTML5 Audio Element with iOS Safari AAC/M4A native sources */}
       <audio
         ref={audioRef}
-        src="/music.webm"
         loop
         preload="auto"
-      />
+        playsInline
+        aria-hidden="true"
+      >
+        <source src="/music.m4a" type="audio/mp4" />
+        <source src="/music.m4a" type="audio/aac" />
+        <source src="/music.webm" type="audio/webm" />
+      </audio>
 
       {/* INITIAL WELCOME MODAL: Always asks on every page load */}
       <AnimatePresence>
@@ -100,8 +122,9 @@ export default function MusicPlayer() {
               <div className="flex flex-col gap-2.5">
                 <button
                   onClick={handlePlayMusic}
+                  onTouchStart={handlePlayMusic}
                   type="button"
-                  className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-[#f0c268] via-[#e5b350] to-[#cca048] hover:from-[#e5b350] hover:to-[#b88c38] text-white font-montserrat font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer"
+                  className="w-full py-3 px-5 rounded-2xl bg-gradient-to-r from-[#f0c268] via-[#e5b350] to-[#cca048] hover:from-[#e5b350] hover:to-[#b88c38] text-white font-montserrat font-bold text-sm tracking-wide shadow-md hover:shadow-lg transition-all duration-300 transform hover:-translate-y-0.5 active:translate-y-0 flex items-center justify-center gap-2 cursor-pointer touch-manipulation"
                 >
                   <Volume2 className="w-5 h-5" />
                   <span>Sí, reproducir música</span>
@@ -121,7 +144,7 @@ export default function MusicPlayer() {
         )}
       </AnimatePresence>
 
-      {/* FLOATING PLAY/PAUSE CONTROLLER (Bottom-Right corner) */}
+      {/* FLOATING PLAY/PAUSE CONTROLLER */}
       {hasAnswered && (
         <motion.div
           initial={{ scale: 0, opacity: 0 }}
@@ -131,9 +154,10 @@ export default function MusicPlayer() {
         >
           <button
             onClick={togglePlayPause}
+            onTouchStart={togglePlayPause}
             title={isPlaying ? "Pausar música" : "Reproducir música"}
             aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
-            className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-full border-2 border-[#dfb56c] shadow-[0_8px_25px_rgba(180,130,50,0.35)] backdrop-blur-md transition-all duration-300 cursor-pointer ${
+            className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-full border-2 border-[#dfb56c] shadow-[0_8px_25px_rgba(180,130,50,0.35)] backdrop-blur-md transition-all duration-300 cursor-pointer touch-manipulation ${
               isPlaying
                 ? "bg-white/90 text-[#cca048] hover:bg-white"
                 : "bg-white/80 text-[#8c6220] hover:bg-white/95"
