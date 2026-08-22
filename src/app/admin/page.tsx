@@ -5,7 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import {
   Users, UserPlus, Copy, Trash2, Download, CheckCircle2,
   XCircle, Clock, Crown, Loader2, RefreshCw, Search,
-  ChevronLeft, ChevronRight, AlertTriangle, UserCheck, Check, Edit
+  ChevronLeft, ChevronRight, AlertTriangle, UserCheck, Check, Edit,
+  MessageSquare
 } from "lucide-react";
 import { supabase, type GuestWithRsvp } from "@/lib/supabase";
 import * as XLSX from "xlsx";
@@ -16,7 +17,7 @@ function getBaseUrl() {
   if (typeof window !== "undefined") {
     return window.location.origin;
   }
-  return "";
+  return "https://quinceaniera.vercel.app";
 }
 
 export default function AdminPage() {
@@ -203,6 +204,31 @@ export default function AdminPage() {
     XLSX.writeFile(wb, "lista_invitados_quinces_almudena.xlsx");
   };
 
+  // Export WhatsApp Template Excel
+  const exportWhatsAppExcel = () => {
+    const dataRows = guests.map((g) => {
+      const link = `${getBaseUrl()}/?invitado=${g.token}`;
+      const message = `Será un honor contar con tu presencia en los *XV años de Almudena Vera Viteri*✨\n\n📅 *19 de septiembre de 2026*\n\nPor favor, *Confirmar tu asistencia hasta el 9 de septiembre*. Si no recibimos tu respuesta, entenderemos que no podrás acompañarnos.\n\n⏰ Te pedimos *puntualidad* para que disfrutes de cada momento y de cada sorpresa preparada.\n💌 Para un recordatorio exclusivo, presiona la fecha de la invitación.\n\n*Gracias por ser parte de este día tan especial. ¡Te esperamos!*💕\n\n*Clic para ver la invitación*👇🏻\n${link}`;
+
+      return {
+        "Invitado": g.name,
+        "Mensaje WhatsApp": message,
+      };
+    });
+
+    const ws = XLSX.utils.json_to_sheet(dataRows);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Mensajes WhatsApp");
+
+    // Column widths
+    ws["!cols"] = [
+      { wch: 35 },
+      { wch: 80 },
+    ];
+
+    XLSX.writeFile(wb, "plantillas_whatsapp_quinces_almudena.xlsx");
+  };
+
   // Stats
   const totalGuests = guests.length;
   const totalAllocatedPeople = useMemo(() => {
@@ -259,7 +285,7 @@ export default function AdminPage() {
             </p>
           </div>
 
-          <div className="flex items-center gap-2.5 w-full sm:w-auto">
+          <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
             <button
               onClick={fetchGuests}
               title="Recargar datos"
@@ -268,12 +294,21 @@ export default function AdminPage() {
               <RefreshCw className={`w-4 h-4 ${loading ? "animate-spin" : ""}`} />
             </button>
             <button
+              onClick={exportWhatsAppExcel}
+              disabled={guests.length === 0}
+              title="Descargar Excel con mensajes de WhatsApp listos para enviar"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-white font-montserrat font-bold text-xs sm:text-sm shadow-md transition-colors cursor-pointer disabled:opacity-50"
+            >
+              <MessageSquare className="w-4 h-4" />
+              Plantilla WhatsApp (Excel)
+            </button>
+            <button
               onClick={exportExcel}
               disabled={guests.length === 0}
-              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl bg-[#217346] hover:bg-[#1a5c38] text-white font-montserrat font-bold text-sm shadow-md transition-colors cursor-pointer disabled:opacity-50"
+              className="flex-1 sm:flex-none flex items-center justify-center gap-2 px-3.5 py-2.5 rounded-xl bg-[#217346] hover:bg-[#1a5c38] text-white font-montserrat font-bold text-xs sm:text-sm shadow-md transition-colors cursor-pointer disabled:opacity-50"
             >
               <Download className="w-4 h-4" />
-              Exportar Excel
+              Exportar Lista Excel
             </button>
           </div>
         </div>
