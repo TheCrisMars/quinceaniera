@@ -186,11 +186,10 @@ export default function ItineraryCard({ onOpenRsvp, invitadoToken }: ItineraryCa
                           <button
                             key={count}
                             onClick={() => setTotalAttending(count)}
-                            className={`px-2.5 py-1 rounded-lg font-montserrat font-bold text-xs border transition-all cursor-pointer ${
-                              totalAttending === count
+                            className={`px-2.5 py-1 rounded-lg font-montserrat font-bold text-xs border transition-all cursor-pointer ${totalAttending === count
                                 ? "bg-[#cca048] border-[#cca048] text-white shadow-xs"
                                 : "bg-white border-[#dfb56c]/70 text-[#5d4037] hover:border-[#cca048]"
-                            }`}
+                              }`}
                           >
                             {count} {count === 1 ? "persona" : "personas"}
                           </button>
@@ -261,9 +260,19 @@ export default function ItineraryCard({ onOpenRsvp, invitadoToken }: ItineraryCa
       </div>
 
       {/* 5. Subtext */}
-      <div className="absolute top-[83%] left-0 right-0 flex justify-center px-8">
+      <div className="absolute top-[82%] left-0 right-0 flex justify-center px-8">
         <p className="font-cormorant text-xs sm:text-sm text-[#4a3528] text-center max-w-[290px] sm:max-w-[340px] leading-tight">
           Agradecemos que confirmes tu asistencia hasta el <span className="font-bold">Miércoles 9 de Septiembre</span>
+        </p>
+      </div>
+
+      {/* 6. Closing message */}
+      <div className="absolute top-[87%] left-0 right-0 flex flex-col items-center justify-center px-6 gap-1">
+        <p className="font-montserrat font-semibold text-[10px] sm:text-[11px] tracking-[1.5px] uppercase text-[#cca048]">
+          Ser Puntuales
+        </p>
+        <p className="font-cormorant font-bold text-lg sm:text-xl text-[#2e1f14] mt-0.5">
+          ¡Muchas Gracias!
         </p>
       </div>
     </motion.section>
