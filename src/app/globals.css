@@ -1,0 +1,106 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@layer base {
+  :root {
+    --font-cormorant: var(--font-cormorant), 'Cormorant Garamond', Georgia, serif;
+    --font-playfair: var(--font-playfair), 'Playfair Display', Georgia, serif;
+    --font-pinyon: var(--font-pinyon), 'Pinyon Script', cursive;
+    --font-great-vibes: var(--font-great-vibes), 'Great Vibes', cursive;
+    --font-alex-brush: var(--font-alex-brush), 'Alex Brush', cursive;
+    --font-cinzel: var(--font-cinzel), 'Cinzel', serif;
+    --font-montserrat: var(--font-montserrat), 'Montserrat', sans-serif;
+    --font-orbitron: var(--font-orbitron), 'Orbitron', monospace;
+  }
+}
+
+/* Custom Typography */
+.font-cormorant { font-family: var(--font-cormorant); }
+.font-playfair { font-family: var(--font-playfair); }
+.font-pinyon { font-family: var(--font-pinyon); }
+.font-great-vibes { font-family: var(--font-great-vibes); }
+.font-alex-brush { font-family: var(--font-alex-brush); }
+.font-cinzel { font-family: var(--font-cinzel); }
+.font-montserrat { font-family: var(--font-montserrat); }
+.font-orbitron { font-family: var(--font-orbitron); }
+
+/* ============================================
+   WATERCOLOR BACKGROUND — fixed, full-viewport
+   The image stays fixed while content scrolls
+   over it, so it never tiles or stretches.
+   ============================================ */
+.bg-pink-watercolor {
+  background-color: #fdf0f2;
+  background-image: url('/background.jpg');
+  background-attachment: fixed;
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+}
+
+/* Luxury Gold Text Gradients */
+.gold-text-gradient {
+  background: linear-gradient(135deg, #9b6c25 0%, #dba54e 35%, #fff3c9 55%, #c8953c 80%, #875a18 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 3px rgba(120, 80, 20, 0.3));
+}
+
+.gold-number-gradient {
+  background: linear-gradient(180deg, #ffe89e 0%, #e6bd6a 25%, #fff6d6 45%, #c8953c 70%, #7d5214 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 4px 6px rgba(110, 70, 15, 0.4));
+}
+
+.gold-btn-gradient {
+  background: linear-gradient(135deg, #a3752c 0%, #dfb56c 35%, #fff1c5 55%, #c59345 80%, #91621a 100%);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 4px 15px rgba(198, 150, 71, 0.35);
+}
+
+.gold-btn-gradient:hover {
+  background: linear-gradient(135deg, #8f6320 0%, #cca155 35%, #fce9ad 55%, #b48030 80%, #7b5113 100%);
+  box-shadow: 0 6px 20px rgba(198, 150, 71, 0.55);
+}
+
+/* Gold Frame Corners */
+.corner-filigree {
+  position: absolute;
+  width: 38px;
+  height: 38px;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Cpath d='M10,90 Q10,10 90,10 Q50,10 50,50 Q50,90 10,90 Z' fill='none' stroke='%23c59345' stroke-width='6'/%3E%3Ccircle cx='25' cy='25' r='8' fill='%23dfb56c'/%3E%3Cpath d='M25,25 Q70,30 80,80' fill='none' stroke='%23a3752c' stroke-width='4'/%3E%3C/svg%3E") no-repeat center;
+  background-size: contain;
+}
+
+.corner-top-left { top: -8px; left: -8px; }
+.corner-top-right { top: -8px; right: -8px; transform: scaleX(-1); }
+.corner-bottom-left { bottom: -8px; left: -8px; transform: scaleY(-1); }
+.corner-bottom-right { bottom: -8px; right: -8px; transform: scale(-1); }
+
+/* Animations */
+@keyframes pulseGlow {
+  0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px rgba(240, 98, 146, 0.4)); }
+  50% { transform: scale(1.12); filter: drop-shadow(0 0 10px rgba(240, 98, 146, 0.8)); }
+}
+
+.animate-heart-pulse {
+  animation: pulseGlow 2s infinite ease-in-out;
+}
+
+@keyframes soundWave {
+  0%, 100% { height: 3px; }
+  50% { height: 12px; }
+}
+
+.wave-bar-1 { animation: soundWave 0.8s infinite ease-in-out; }
+.wave-bar-2 { animation: soundWave 0.8s infinite ease-in-out 0.2s; }
+.wave-bar-3 { animation: soundWave 0.8s infinite ease-in-out 0.4s; }
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: #fce4ec; }
+::-webkit-scrollbar-thumb { background: #c59345; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #dfb56c; }
