@@ -73,8 +73,8 @@ export default function MusicPlayer() {
         playsInline
         aria-hidden="true"
       >
+        <source src="/music.mp3" type="audio/mpeg" />
         <source src="/music.m4a" type="audio/mp4" />
-        <source src="/music.m4a" type="audio/aac" />
         <source src="/music.webm" type="audio/webm" />
       </audio>
 
@@ -115,7 +115,7 @@ export default function MusicPlayer() {
               </h3>
 
               <p className="font-montserrat text-xs text-[#6e543c] italic mb-6">
-                &ldquo;Cree y Atrévete&rdquo; &bull; Tinkerbell
+                &ldquo;NUEVAYoL&rdquo; &bull; Bad Bunny
               </p>
 
               {/* Action Buttons */}
@@ -157,11 +157,10 @@ export default function MusicPlayer() {
             onTouchStart={togglePlayPause}
             title={isPlaying ? "Pausar música" : "Reproducir música"}
             aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
-            className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-full border-2 border-[#dfb56c] shadow-[0_8px_25px_rgba(180,130,50,0.35)] backdrop-blur-md transition-all duration-300 cursor-pointer touch-manipulation ${
-              isPlaying
-                ? "bg-white/90 text-[#cca048] hover:bg-white"
-                : "bg-white/80 text-[#8c6220] hover:bg-white/95"
-            }`}
+            className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-full border-2 border-[#dfb56c] shadow-[0_8px_25px_rgba(180,130,50,0.35)] backdrop-blur-md transition-all duration-300 cursor-pointer touch-manipulation ${isPlaying
+              ? "bg-white/90 text-[#cca048] hover:bg-white"
+              : "bg-white/80 text-[#8c6220] hover:bg-white/95"
+              }`}
           >
             {/* Rotating Vinyl/Disc icon when playing */}
             <div className={`relative w-7 h-7 rounded-full bg-gradient-to-tr from-[#cca048] to-[#f0c268] flex items-center justify-center ${isPlaying ? "animate-spin" : ""}`}>
