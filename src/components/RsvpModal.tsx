@@ -12,7 +12,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -29,14 +28,12 @@ interface RsvpModalProps {
 
 export default function RsvpModal({ open, onOpenChange }: RsvpModalProps) {
   const [name, setName] = useState("");
-  const [guests, setGuests] = useState("2");
+  const [guests, setGuests] = useState("1");
   const [status, setStatus] = useState("si");
-  const [message, setMessage] = useState("");
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Trigger celebration confetti
     try {
       confetti({
         particleCount: 80,
@@ -48,7 +45,6 @@ export default function RsvpModal({ open, onOpenChange }: RsvpModalProps) {
       // ignore
     }
 
-    // Build WhatsApp message
     const attendanceText = status === "si" ? "¡Confirmo con gusto mi asistencia! 🎉" : "Lamentablemente no podré asistir 😢";
     let text = `👑 *CONFIRMACIÓN DE ASISTENCIA - 15 AÑOS*\n`;
     text += `*Quinceañera:* Almudena Vera Viteri\n`;
@@ -57,15 +53,8 @@ export default function RsvpModal({ open, onOpenChange }: RsvpModalProps) {
     if (status === "si") {
       text += `*Número de personas:* ${guests}\n`;
     }
-    if (message.trim()) {
-      text += `*Mensaje para Almudena:* "${message}"\n`;
-    }
 
-    // Default target phone number
-    const phone = ""; 
-    const whatsappUrl = phone
-      ? `https://api.whatsapp.com/send?phone=${phone}&text=${encodeURIComponent(text)}`
-      : `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`;
 
     window.open(whatsappUrl, "_blank");
     onOpenChange(false);
@@ -73,7 +62,7 @@ export default function RsvpModal({ open, onOpenChange }: RsvpModalProps) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[440px] bg-[#fff8f9] border-2 border-[#cba158] rounded-2xl shadow-2xl p-6 sm:p-8">
+      <DialogContent className="sm:max-w-[420px] bg-[#fff8f9] border-2 border-[#cba158] rounded-2xl shadow-2xl p-6 sm:p-8">
         <DialogHeader className="text-center sm:text-center">
           <div className="mx-auto text-3xl mb-1">👑</div>
           <DialogTitle className="font-montserrat font-bold text-lg text-[#9c7328] uppercase tracking-wider">
@@ -134,20 +123,6 @@ export default function RsvpModal({ open, onOpenChange }: RsvpModalProps) {
               </Select>
             </div>
           )}
-
-          <div className="space-y-1.5 text-left">
-            <Label htmlFor="guestMessage" className="font-montserrat text-xs font-semibold text-[#5d4037]">
-              Mensaje de felicitaciones (Opcional):
-            </Label>
-            <Textarea
-              id="guestMessage"
-              value={message}
-              onChange={(e) => setMessage(e.target.value)}
-              placeholder="¡Muchas felicidades en tus 15 años Almudena!"
-              rows={3}
-              className="bg-white border-[#d4a359] focus-visible:ring-[#cba158] font-montserrat text-sm"
-            />
-          </div>
 
           <Button
             type="submit"

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { CalendarPlus } from "lucide-react";
@@ -11,7 +12,9 @@ import ItineraryCard from "@/components/ItineraryCard";
 import RsvpModal from "@/components/RsvpModal";
 import MusicPlayer from "@/components/MusicPlayer";
 
-export default function Home() {
+function HomeContent() {
+  const searchParams = useSearchParams();
+  const invitadoToken = searchParams.get("invitado");
   const [rsvpOpen, setRsvpOpen] = useState(false);
 
   const handleAddToCalendar = () => {
@@ -91,7 +94,7 @@ export default function Home() {
         {/* =========================================================
             SLIDE 5: ITINERARIO DE ACTIVIDADES & CONFIRMACIÓN (CÓDIGO PURO)
            ========================================================= */}
-        <ItineraryCard onOpenRsvp={() => setRsvpOpen(true)} />
+        <ItineraryCard onOpenRsvp={() => setRsvpOpen(true)} invitadoToken={invitadoToken} />
 
         {/* Footer */}
         <footer className="w-full text-center py-6 font-cormorant text-[#8c6220] flex flex-col items-center gap-2 border-t border-[#dfb56c]/30 mt-2">
@@ -117,5 +120,13 @@ export default function Home() {
       {/* Background Music Prompt & Floating Controller */}
       <MusicPlayer />
     </div>
+  );
+}
+
+export default function Home() {
+  return (
+    <Suspense fallback={null}>
+      <HomeContent />
+    </Suspense>
   );
 }
