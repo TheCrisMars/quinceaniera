@@ -317,43 +317,6 @@ export default function AdminPage() {
           </div>
         </div>
 
-        {/* 3. Add New Guest Form */}
-        <div className="bg-white rounded-2xl border border-[#dfb56c]/50 shadow-sm p-5">
-          <h2 className="font-montserrat font-bold text-base text-[#2e1f14] mb-3 flex items-center gap-2">
-            <UserPlus className="w-4 h-4 text-[#cca048]" />
-            Agregar Nuevo Invitado
-          </h2>
-          <form onSubmit={handleAddGuest} className="flex flex-col sm:flex-row gap-3">
-            <input
-              type="text"
-              placeholder="Nombre del invitado (ej: Sr. Juan Pérez y Familia)"
-              value={newName}
-              onChange={(e) => setNewName(e.target.value)}
-              required
-              className="flex-1 px-4 py-2.5 rounded-xl border-2 border-[#dfb56c]/60 focus:border-[#cca048] font-cormorant text-base text-[#2e1f14] outline-none transition-colors"
-            />
-            <div className="flex gap-2 items-center">
-              <label className="font-montserrat text-xs text-[#5d4037] whitespace-nowrap">Acompañantes extra:</label>
-              <input
-                type="number"
-                min={0}
-                max={20}
-                value={newMaxComp}
-                onChange={(e) => setNewMaxComp(Number(e.target.value))}
-                className="w-16 px-2 py-2 rounded-xl border-2 border-[#dfb56c]/60 focus:border-[#cca048] font-montserrat text-sm text-center outline-none"
-              />
-            </div>
-            <button
-              type="submit"
-              disabled={adding}
-              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#f0c268] to-[#cca048] hover:from-[#e5b350] hover:to-[#b88c38] text-white font-montserrat font-bold text-sm shadow-md transition-all cursor-pointer disabled:opacity-70 flex items-center justify-center gap-2"
-            >
-              {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
-              Agregar
-            </button>
-          </form>
-        </div>
-
         {/* 4. Search & Filters */}
         <div className="bg-white rounded-2xl border border-[#dfb56c]/50 shadow-sm p-4 flex flex-col md:flex-row gap-3 justify-between items-center">
           <div className="relative w-full md:w-80">
@@ -385,11 +348,10 @@ export default function AdminPage() {
               <button
                 key={tab.id}
                 onClick={() => setStatusFilter(tab.id as any)}
-                className={`px-3 py-1.5 rounded-xl font-montserrat text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${
-                  statusFilter === tab.id
-                    ? "bg-[#cca048] text-white shadow-xs"
-                    : "bg-[#fffbe8] text-[#5d4037] border border-[#dfb56c]/40 hover:bg-[#fff6d0]"
-                }`}
+                className={`px-3 py-1.5 rounded-xl font-montserrat text-xs font-semibold whitespace-nowrap transition-all cursor-pointer ${statusFilter === tab.id
+                  ? "bg-[#cca048] text-white shadow-xs"
+                  : "bg-[#fffbe8] text-[#5d4037] border border-[#dfb56c]/40 hover:bg-[#fff6d0]"
+                  }`}
               >
                 {tab.label}
               </button>
@@ -441,9 +403,8 @@ export default function AdminPage() {
                     return (
                       <tr
                         key={g.id}
-                        className={`border-b border-[#dfb56c]/20 hover:bg-[#fffbe8]/70 transition-colors ${
-                          idx % 2 === 0 ? "" : "bg-[#fffcf8]/40"
-                        }`}
+                        className={`border-b border-[#dfb56c]/20 hover:bg-[#fffbe8]/70 transition-colors ${idx % 2 === 0 ? "" : "bg-[#fffcf8]/40"
+                          }`}
                       >
                         <td className="px-4 py-3.5">
                           <p className="font-cormorant font-bold text-base sm:text-lg text-[#2e1f14] leading-tight">
@@ -497,11 +458,10 @@ export default function AdminPage() {
 
                             <button
                               onClick={() => copyLink(g.token, g.id)}
-                              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-montserrat font-bold border transition-all duration-200 cursor-pointer ${
-                                copiedId === g.id
-                                  ? "bg-green-500 border-green-600 text-white shadow-xs"
-                                  : "bg-[#fffbe8] border-[#dfb56c]/70 text-[#5d4037] hover:border-[#cca048] hover:bg-[#fff6d0]"
-                              }`}
+                              className={`flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-montserrat font-bold border transition-all duration-200 cursor-pointer ${copiedId === g.id
+                                ? "bg-green-500 border-green-600 text-white shadow-xs"
+                                : "bg-[#fffbe8] border-[#dfb56c]/70 text-[#5d4037] hover:border-[#cca048] hover:bg-[#fff6d0]"
+                                }`}
                             >
                               {copiedId === g.id ? (
                                 <>
@@ -670,15 +630,14 @@ export default function AdminPage() {
                         key={status.id}
                         type="button"
                         onClick={() => setEditRsvpStatus(status.id as any)}
-                        className={`flex-1 py-2 rounded-xl font-montserrat text-xs font-bold border transition-all cursor-pointer ${
-                          editRsvpStatus === status.id
-                            ? status.id === "confirmed"
-                              ? "bg-green-600 border-green-600 text-white shadow-xs"
-                              : status.id === "declined"
+                        className={`flex-1 py-2 rounded-xl font-montserrat text-xs font-bold border transition-all cursor-pointer ${editRsvpStatus === status.id
+                          ? status.id === "confirmed"
+                            ? "bg-green-600 border-green-600 text-white shadow-xs"
+                            : status.id === "declined"
                               ? "bg-red-600 border-red-600 text-white shadow-xs"
                               : "bg-amber-500 border-amber-500 text-white shadow-xs"
-                            : "bg-[#fffbe8] border-[#dfb56c]/40 text-[#5d4037]"
-                        }`}
+                          : "bg-[#fffbe8] border-[#dfb56c]/40 text-[#5d4037]"
+                          }`}
                       >
                         {status.label}
                       </button>
