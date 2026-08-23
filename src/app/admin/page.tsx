@@ -352,6 +352,55 @@ export default function AdminPage() {
           </div>
         </div>
 
+        {/* 3. Add Guest Form */}
+        <div className="bg-white rounded-2xl border border-[#dfb56c]/50 shadow-sm p-4 sm:p-5">
+          <h2 className="font-montserrat font-bold text-sm sm:text-base text-[#2e1f14] flex items-center gap-2 mb-3">
+            <UserPlus className="w-4 h-4 text-[#cca048]" />
+            Agregar Nuevo Invitado
+          </h2>
+          <form onSubmit={handleAddGuest} className="flex flex-col sm:flex-row items-stretch sm:items-end gap-3">
+            <div className="flex-1">
+              <label className="font-montserrat font-semibold text-xs text-[#5d4037] block mb-1">
+                Nombre del Invitado / Familia:
+              </label>
+              <input
+                type="text"
+                placeholder="Ej. Sr. Juan Pérez y Familia"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                required
+                className="w-full px-3.5 py-2 rounded-xl border border-[#dfb56c]/60 focus:border-[#cca048] font-cormorant text-base text-[#2e1f14] outline-none transition-colors"
+              />
+            </div>
+
+            <div className="w-full sm:w-56">
+              <label className="font-montserrat font-semibold text-xs text-[#5d4037] block mb-1">
+                Acompañantes Extra:
+              </label>
+              <select
+                value={newMaxComp}
+                onChange={(e) => setNewMaxComp(Number(e.target.value))}
+                className="w-full px-3.5 py-2 rounded-xl border border-[#dfb56c]/60 focus:border-[#cca048] font-montserrat text-xs text-[#2e1f14] outline-none transition-colors bg-white cursor-pointer"
+              >
+                {Array.from({ length: 15 }, (_, i) => (
+                  <option key={i} value={i}>
+                    {i === 0 ? "Solo el invitado (1 persona)" : `+${i} acompañantes (${i + 1} personas)`}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <button
+              type="submit"
+              disabled={adding || !newName.trim()}
+              className="px-5 py-2.5 rounded-xl bg-gradient-to-r from-[#f0c268] to-[#cca048] hover:from-[#e5b350] hover:to-[#b88c38] text-white font-montserrat font-bold text-xs sm:text-sm shadow-md transition-all cursor-pointer flex items-center justify-center gap-1.5 disabled:opacity-50"
+            >
+              {adding ? <Loader2 className="w-4 h-4 animate-spin" /> : <UserPlus className="w-4 h-4" />}
+              <span>Agregar Invitado</span>
+            </button>
+          </form>
+        </div>
+
         {/* 4. Search & Filters */}
         <div className="bg-white rounded-2xl border border-[#dfb56c]/50 shadow-sm p-4 flex flex-col md:flex-row gap-3 justify-between items-center">
           <div className="relative w-full md:w-80">
