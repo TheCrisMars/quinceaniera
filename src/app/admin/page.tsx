@@ -114,31 +114,95 @@ export default function AdminPage() {
     if (!editTarget || !editName.trim()) return;
     setSavingEdit(true);
 
-    await supabase
-      .from("guests")
-      .update({ name: editName.trim(), max_companions: editMaxComp })
-      .eq("id", editTarget.id);
+    try {
+      // 1. Update guest name and max_companions in guests table with .select() to verify rows affected
+      const { data: updatedGuests, error: guestError } = await supabase
+        .from("guests")
+        .update({
+          name: editName.trim(),
+          max_companions: Math.max(0, editMaxComp),
+        })
+        .eq("id", editTarget.id)
+        .select();
 
-    if (editRsvpStatus === "pending") {
-      await supabase.from("rsvps").delete().eq("guest_id", editTarget.id);
-    } else {
-      const isConfirmed = editRsvpStatus === "confirmed";
-      const companionsCount = isConfirmed ? Math.max(0, editAttendingCount - 1) : 0;
+      if (guestError) {
+        console.error("Error al actualizar invitado:", guestError);
+        alert("No se pudo actualizar el invitado: " + guestError.message);
+        setSavingEdit(false);
+        return;
+      }
 
-      await supabase.from("rsvps").upsert(
-        {
-          guest_id: editTarget.id,
-          confirmed: isConfirmed,
-          companions_count: companionsCount,
-          message: null,
-        },
-        { onConflict: "guest_id" }
-      );
+      if (!updatedGuests || updatedGuests.length === 0) {
+        alert(
+          "⚠️ ATENCIÓN: Supabase bloqueó la actualización por falta de permisos (RLS).\n\n" +
+          "Para solucionarlo, abre Supabase → SQL Editor → New Query y ejecuta:\n\n" +
+          "CREATE POLICY \"guests_update\" ON guests FOR UPDATE USING (true);"
+        );
+      }
+
+      // 2. Update RSVP status in rsvps table
+      if (editRsvpStatus === "pending") {
+        // Delete RSVP entry to make it Pending
+        const { error: rsvpDeleteError } = await supabase
+          .from("rsvps")
+          .delete()
+          .eq("guest_id", editTarget.id);
+
+        if (rsvpDeleteError) {
+          console.error("Error al eliminar RSVP:", rsvpDeleteError);
+        }
+      } else {
+        const isConfirmed = editRsvpStatus === "confirmed";
+        const maxAllowedAttending = editMaxComp + 1;
+        const validAttending = Math.min(editAttendingCount, maxAllowedAttending);
+        const companionsCount = isConfirmed ? Math.max(0, validAttending - 1) : 0;
+
+        // Check if an RSVP record already exists for this guest
+        const { data: existingRsvp } = await supabase
+          .from("rsvps")
+          .select("id")
+          .eq("guest_id", editTarget.id)
+          .maybeSingle();
+
+        if (existingRsvp) {
+          const { error: rsvpUpdateError } = await supabase
+            .from("rsvps")
+            .update({
+              confirmed: isConfirmed,
+              companions_count: companionsCount,
+              message: null,
+            })
+            .eq("guest_id", editTarget.id);
+
+          if (rsvpUpdateError) {
+            console.error("Error al actualizar RSVP:", rsvpUpdateError);
+            alert("No se pudo actualizar la confirmación: " + rsvpUpdateError.message);
+          }
+        } else {
+          const { error: rsvpInsertError } = await supabase
+            .from("rsvps")
+            .insert({
+              guest_id: editTarget.id,
+              confirmed: isConfirmed,
+              companions_count: companionsCount,
+              message: null,
+            });
+
+          if (rsvpInsertError) {
+            console.error("Error al crear RSVP:", rsvpInsertError);
+            alert("No se pudo crear la confirmación: " + rsvpInsertError.message);
+          }
+        }
+      }
+
+      setEditTarget(null);
+      await fetchGuests();
+    } catch (err: any) {
+      console.error("Unexpected edit error:", err);
+      alert("Ocurrió un error al guardar los cambios.");
+    } finally {
+      setSavingEdit(false);
     }
-
-    setSavingEdit(false);
-    setEditTarget(null);
-    await fetchGuests();
   };
 
   // Confirm Delete Guest
@@ -270,7 +334,7 @@ export default function AdminPage() {
   }, [filteredGuests, currentPage, pageSize]);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#fffcf8] via-[#fff6e9] to-[#fce8d0] px-3 sm:px-6 py-6 sm:py-8 select-none">
+    <div className="min-h-screen bg-gradient-to-br from-[#fffcf8] via-[#fff6e9] to-[#fce8d0] px-3 sm:px-6 py-6 sm:py-8">
       <div className="max-w-5xl mx-auto flex flex-col gap-6">
 
         {/* 1. Header Navigation */}
