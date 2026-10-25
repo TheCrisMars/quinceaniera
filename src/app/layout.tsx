@@ -52,19 +52,33 @@ const orbitron = Orbitron({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://quinceaniera.vercel.app"), // cambia por tu dominio real
+  metadataBase: new URL("https://quinceaniera.vercel.app"),
   title: "María Sol ✨ Mis XV | Una Celebración Única",
   description: "Esta invitación fue reservada especialmente para ti",
   openGraph: {
     title: "María Sol ✨ Mis XV | Una Celebración Única",
     description: "Esta invitación fue reservada especialmente para ti",
+    url: "https://quinceaniera.vercel.app",
     siteName: "quinceaniera.vercel.app",
     type: "website",
     locale: "es_EC",
-    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Invitación Mis XV María Sol" }],
+    images: [
+      {
+        url: "/og.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Invitación Mis XV María Sol",
+        type: "image/jpeg",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "María Sol ✨ Mis XV | Una Celebración Única",
+    description: "Esta invitación fue reservada especialmente para ti",
+    images: ["/og.jpg"],
   },
 };
-
 
 export default function RootLayout({
   children,
