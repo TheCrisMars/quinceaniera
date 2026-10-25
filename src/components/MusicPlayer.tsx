@@ -50,7 +50,7 @@ export default function MusicPlayer() {
   return (
     <>
       <audio ref={audioRef} loop preload="auto" playsInline aria-hidden="true">
-        <source src="/music.mp3" />
+        <source src="/music.mp3" type="audio/mpeg" />
       </audio>
 
       {ready && (
