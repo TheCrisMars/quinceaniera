@@ -172,10 +172,12 @@ function HomeContent() {
             <video
               ref={introVideoRef}
               className="h-full w-full object-contain"
-              preload="auto"
+              poster="/images/sobre-poster.jpg"
+              preload="metadata"
               playsInline
               muted
               onLoadedMetadata={(event) => {
+                event.currentTarget.muted = true; // fuerza el muted en iOS
                 event.currentTarget.playbackRate = 1.4;
               }}
               onEnded={() => {
@@ -183,7 +185,7 @@ function HomeContent() {
                 setTimeout(() => setIntroDone(true), 450);
               }}
             >
-              <source src="/video/animation.mp4" type="video/mp4" />
+              <source src="/video/animation.mp4#t=0.001" type="video/mp4" />
             </video>
 
             {!introOpen && !introStarted && (
@@ -195,9 +197,12 @@ function HomeContent() {
                   const video = introVideoRef.current;
                   if (!video) return;
                   setIntroStarted(true);
-                  video.currentTime = 0;
+                  video.muted = true;
                   video.playbackRate = 1.4;
-                  video.play().catch(() => { });
+                  video.play().catch(() => {
+                    setIntroOpen(true);
+                    setTimeout(() => setIntroDone(true), 450);
+                  });
                 }}
               >
               </button>
