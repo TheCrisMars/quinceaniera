@@ -4,18 +4,31 @@ import { motion } from "framer-motion";
 import { Pause, Play } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 
-export default function MusicPlayer() {
+interface MusicPlayerProps {
+  /** Cuando pasa a true (terminó la intro), empieza la música */
+  start: boolean;
+}
+
+export default function MusicPlayer({ start }: MusicPlayerProps) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [ready, setReady] = useState(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
+  // Configuración inicial (sin reproducir)
   useEffect(() => {
     const audio = audioRef.current;
     if (!audio) return;
-
     audio.volume = 0.8;
+  }, []);
 
-    const tryAutoPlay = async () => {
+  // Arranca la música cuando termina la intro
+  useEffect(() => {
+    if (!start) return;
+
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const play = async () => {
       try {
         await audio.play();
         setIsPlaying(true);
@@ -26,8 +39,8 @@ export default function MusicPlayer() {
       }
     };
 
-    tryAutoPlay();
-  }, []);
+    play();
+  }, [start]);
 
   const toggleAudio = async () => {
     const audio = audioRef.current;

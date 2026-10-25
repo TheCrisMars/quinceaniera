@@ -306,7 +306,7 @@ function HomeContent() {
       </main>
 
       <RsvpModal open={rsvpOpen} onOpenChange={setRsvpOpen} />
-      <MusicPlayer />
+      <MusicPlayer start={introOpen} />
     </div>
   );
 }
