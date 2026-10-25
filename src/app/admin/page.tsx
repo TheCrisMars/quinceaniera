@@ -1,14 +1,27 @@
 "use client";
 
-import { useState, useEffect, useCallback, useMemo } from "react";
-import { motion, AnimatePresence } from "framer-motion";
-import {
-  Users, UserPlus, Copy, Trash2, Download, CheckCircle2,
-  XCircle, Clock, Crown, Loader2, RefreshCw, Search,
-  ChevronLeft, ChevronRight, AlertTriangle, UserCheck, Check, Edit,
-  MessageSquare
-} from "lucide-react";
 import { supabase, type GuestWithRsvp } from "@/lib/supabase";
+import { AnimatePresence, motion } from "framer-motion";
+import {
+  AlertTriangle,
+  Check,
+  CheckCircle2,
+  ChevronLeft, ChevronRight,
+  Clock,
+  Copy,
+  Crown,
+  Download,
+  Edit,
+  Loader2,
+  MessageSquare,
+  RefreshCw, Search,
+  Trash2,
+  UserCheck,
+  UserPlus,
+  Users,
+  XCircle
+} from "lucide-react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import * as XLSX from "xlsx";
 
 const ITEMS_PER_PAGE_OPTIONS = [10, 25, 50, 100];
@@ -272,8 +285,7 @@ export default function AdminPage() {
   const exportWhatsAppExcel = () => {
     const dataRows = guests.map((g) => {
       const link = `${getBaseUrl()}/?invitado=${g.token}`;
-      const message = `Será un honor contar con tu presencia en los *XV años de Almudena Vera Viteri*✨\n\n📅 *19 de septiembre de 2026*\n\nPor favor, *Confirmar tu asistencia hasta el 9 de septiembre*. Si no recibimos tu respuesta, entenderemos que no podrás acompañarnos.\n\n⏰ Te pedimos *puntualidad* para que disfrutes de cada momento y de cada sorpresa preparada.\n💌 Para un recordatorio exclusivo, presiona la fecha de la invitación.\n\n*Gracias por ser parte de este día tan especial. ¡Te esperamos!*💕\n\n*Clic para ver la invitación*👇🏻\n${link}`;
-
+      const message = `Hay momentos que el tiempo no se atreve a borrar… y este es uno de ellos. ✨ \n\n Con el corazón lleno de ilusión, queremos compartir contigo algo muy especial. \n\n Ábrelo aquí y déjate sorprender 💫\n\n⏰ ${link} \n\n *Dentro encontrarás todo… y un espacio para confirmar tu asistencia. 🤍*💕\n\n Con cariño ✨💫\n\nMaría Sol ❤️`;
       return {
         "Invitado": g.name,
         "Mensaje WhatsApp": message,
@@ -345,7 +357,7 @@ export default function AdminPage() {
               Gestión de Invitados
             </h1>
             <p className="font-cormorant text-base text-[#5d4037] mt-0.5">
-              Mis XV Años &bull; Almudena Vera Viteri &bull; 19 de Septiembre
+              Mis XV Años &bull; Maria Sol
             </p>
           </div>
 

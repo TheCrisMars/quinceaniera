@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Cormorant_Garamond, Great_Vibes, Alex_Brush, Cinzel, Montserrat, Orbitron, Playfair_Display, Pinyon_Script } from "next/font/google";
+import { Metadata } from 'next';
+import { Alex_Brush, Cinzel, Cormorant_Garamond, Great_Vibes, Montserrat, Orbitron, Pinyon_Script, Playfair_Display } from "next/font/google";
 import "./globals.css";
 
 const cormorant = Cormorant_Garamond({
@@ -50,6 +50,20 @@ const orbitron = Orbitron({
   subsets: ["latin"],
   weight: ["500", "700", "800", "900"],
 });
+
+export const metadata: Metadata = {
+  metadataBase: new URL("https://quinceaniera.vercel.app"), // cambia por tu dominio real
+  title: "María Sol ✨ Mis XV | Una Celebración Única",
+  description: "Esta invitación fue reservada especialmente para ti",
+  openGraph: {
+    title: "María Sol ✨ Mis XV | Una Celebración Única",
+    description: "Esta invitación fue reservada especialmente para ti",
+    siteName: "quinceaniera.vercel.app",
+    type: "website",
+    locale: "es_EC",
+    images: [{ url: "/og.jpg", width: 1200, height: 630, alt: "Invitación Mis XV María Sol" }],
+  },
+};
 
 
 export default function RootLayout({
