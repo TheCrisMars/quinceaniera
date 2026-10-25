@@ -264,7 +264,7 @@ function HomeContent() {
 
         <section className="relative w-full aspect-[1240/1748] rounded-2xl overflow-hidden shadow-md bg-white mb-4">
           <Image
-            src="/images/back6.png"
+            src="/images/6.png"
             alt="Sección 6"
             fill
             sizes="(max-width: 800px) 100vw, 620px"
