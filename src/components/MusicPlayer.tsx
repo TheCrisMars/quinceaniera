@@ -50,7 +50,7 @@ export default function MusicPlayer() {
   return (
     <>
       <audio ref={audioRef} loop preload="auto" playsInline aria-hidden="true">
-        <source src="/music.mp3" type="audio/mpeg" />
+        <source src="/music.mp3" />
       </audio>
 
       {ready && (
@@ -66,8 +66,8 @@ export default function MusicPlayer() {
             title={isPlaying ? "Pausar música" : "Reproducir música"}
             aria-label={isPlaying ? "Pausar música" : "Reproducir música"}
             className={`relative flex items-center gap-2 px-3.5 py-2.5 rounded-full border-2 border-[#dfb56c] shadow-[0_8px_25px_rgba(180,130,50,0.35)] backdrop-blur-md transition-all duration-300 cursor-pointer select-none ${isPlaying
-                ? "bg-white/90 text-[#cca048] hover:bg-white"
-                : "bg-white/80 text-[#8c6220] hover:bg-white/95"
+              ? "bg-white/90 text-[#cca048] hover:bg-white"
+              : "bg-white/80 text-[#8c6220] hover:bg-white/95"
               }`}
           >
             <div
