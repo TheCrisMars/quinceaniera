@@ -278,7 +278,7 @@ function HomeContent() {
           <div className="envelope-box">
             <video
               ref={introVideoRef}
-              className="h-full w-full object-contain"
+              className="absolute inset-0 h-full w-full object-cover md:object-contain"
               poster="/images/sobre-poster.jpg"
               preload="metadata"
               playsInline
@@ -305,7 +305,7 @@ function HomeContent() {
                   if (!video) return;
                   setIntroStarted(true);
                   video.muted = true;
-                  video.playbackRate = 1.4;
+                  video.playbackRate = 2.3;
                   video.play().catch(() => {
                     setIntroOpen(true);
                     setTimeout(() => setIntroDone(true), 450);
@@ -352,7 +352,7 @@ function HomeContent() {
           />
 
           {/* Galería: de borde a borde y pegada al fondo */}
-          <div className="absolute inset-x-0 top-[45%] bottom-0 z-10">
+          <div className="absolute inset-x-0 top-[38%] bottom-0 z-10">
             <PhotoGallery />
           </div>
         </section>
