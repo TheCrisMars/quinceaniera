@@ -1,11 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 import Image from "next/image";
 import { motion } from "framer-motion";
 import { CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import RsvpModal from "./RsvpModal";
+
 
 const schedule = [
   { time: "18:00", event: "Recepción de Invitados", icon: "🥂" },
@@ -19,6 +22,53 @@ const schedule = [
 
 export default function ItinerarySection() {
   const [rsvpOpen, setRsvpOpen] = useState(false);
+
+  const searchParams = useSearchParams();
+  const token = searchParams.get("invitado");
+
+  const [guest, setGuest] = useState<{
+    id: string;
+    name: string;
+    max_companions: number;
+  } | null>(null);
+
+  const [loadingGuest, setLoadingGuest] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+
+    async function loadGuest() {
+      setLoadingGuest(true);
+      setGuest(null);
+
+      if (!token) {
+        setLoadingGuest(false);
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("guests")
+        .select("id, name, max_companions")
+        .eq("token", token)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Error al buscar al invitado:", error);
+      }
+
+      if (active) {
+        setGuest(data);
+        setLoadingGuest(false);
+      }
+    }
+
+    loadGuest();
+
+    return () => {
+      active = false;
+    };
+  }, [token]);
+
 
   return (
     <section className="relative w-full py-4 sm:py-8 flex flex-col items-center" id="itinerary">
@@ -131,7 +181,13 @@ export default function ItinerarySection() {
       </div>
 
       {/* RSVP Modal */}
-      <RsvpModal open={rsvpOpen} onOpenChange={setRsvpOpen} />
+      <RsvpModal
+        open={rsvpOpen}
+        onOpenChange={setRsvpOpen}
+        guestId={guest?.id ?? null}
+        guestName={guest?.name ?? ""}
+        maxCompanions={guest?.max_companions ?? 1}
+      />
     </section>
   );
 }
