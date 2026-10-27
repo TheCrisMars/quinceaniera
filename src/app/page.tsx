@@ -184,7 +184,7 @@ function HomeContent() {
       setAttendanceResponse(confirmed ? "yes" : "no");
       setRsvpMessage(
         confirmed
-          ? "¡Gracias por confirmar tu asistencia!"
+          ? ""
           : "Lamentamos que no puedas acompañarnos. ¡Te tendremos presente en este día tan especial!"
       );
     } catch (error) {
@@ -489,123 +489,149 @@ function HomeContent() {
 
         {guest && (
           <section
-            className="relative w-full [container-type:inline-size]"
             id="seccion-9"
+            className="relative w-full bg-[#FBE3F1] [container-type:inline-size]"
           >
-            <Image
-              src="/images/9.png"
-              alt="Invitación especial"
-              width={1080}
-              height={1920}
-              className="block h-auto w-full"
-              priority={false}
-            />
+            {/* Mínimo 150cqw (recorta la parte baja de la imagen), pero crece si la tarjeta lo necesita */}
+            <div className="relative min-h-[150cqw] overflow-hidden">
+              <Image
+                src="/images/9.png"
+                alt="Invitación especial"
+                width={1080}
+                height={1920}
+                className="pointer-events-none absolute left-0 top-0 block h-auto w-full"
+                priority={false}
+              />
 
-            {/* Posición y ancho en % de la imagen */}
-            <div className="absolute inset-x-0 top-[28%] flex justify-center">
-              <div
-                className="w-[84cqw] rounded-[6cqw] border border-[#D8B56D] bg-[#FFFBFD]/90 p-[4.5cqw] text-center shadow-xl"
-              >
-                <p className="font-serif text-[4.6cqw] font-bold uppercase tracking-wide text-[#75476F]">
-                  {guest.name}
-                </p>
+              {/* Tarjeta EN FLUJO. El pt controla qué tan arriba o abajo queda sobre la imagen */}
+              <div className="relative flex justify-center pb-[6cqw] pt-[41cqw]">
+                <div className="w-[84cqw] rounded-[6cqw] border border-[#D8B56D] bg-[#FFFBFD]/90 p-[3.5cqw] text-center shadow-xl">
+                  <p className="font-serif text-[4.4cqw] font-bold uppercase tracking-wide text-[#75476F]">
+                    {guest.name}
+                  </p>
 
-                <p className="mt-[4cqw] font-serif text-[3cqw] tracking-[0.2em] text-[#96728E]">
-                  HEMOS RESERVADO
-                </p>
+                  <p className="mt-[2.5cqw] font-serif text-[2.8cqw] tracking-[0.2em] text-[#96728E]">
+                    HEMOS RESERVADO
+                  </p>
 
-                <p className="mt-[1.5cqw] font-serif text-[15cqw] leading-none text-[#B58B43]">
-                  {guest.max_companions}
-                </p>
+                  <p className="font-serif text-[10cqw] leading-none text-[#B58B43]">
+                    {guest.max_companions}
+                  </p>
 
-                <p className="font-serif text-[6cqw] tracking-[0.18em] text-[#75476F]">
-                  PASES
-                </p>
+                  <p className="font-serif text-[5.5cqw] tracking-[0.18em] text-[#75476F]">
+                    PASES
+                  </p>
 
-                <p className="mt-[2.5cqw] font-serif text-[3cqw] tracking-[0.18em] text-[#96728E]">
-                  EN SU HONOR
-                </p>
+                  <p className="mt-[2cqw] font-serif text-[2.8cqw] tracking-[0.18em] text-[#96728E]">
+                    EN SU HONOR
+                  </p>
 
-                <div className="mx-auto my-[4cqw] flex w-3/4 items-center gap-3">
-                  <div className="h-px flex-1 bg-[#E8D4B0]" />
-                  <span className="text-[3.2cqw] text-[#C49A50]">✦</span>
-                  <div className="h-px flex-1 bg-[#E8D4B0]" />
-                </div>
+                  {attendanceResponse === "pending" ? (
+                    <>
+                      {/* La pregunta se oculta al abrir el selector para ganar espacio */}
+                      {!showAttendanceOptions && (
+                        <p className="mb-[3cqw] mt-[4cqw] text-[3.4cqw] text-[#75476F]">
+                          ¿Nos acompañarás en este día especial?
+                        </p>
+                      )}
 
-                <p className="mb-[3cqw] text-[3.6cqw] text-[#75476F]">
-                  ¿Nos acompañarás en este día especial?
-                </p>
-
-                {attendanceResponse === "pending" ? (
-                  <>
-                    <div className="flex w-full gap-[2cqw]">
-                      <button
-                        type="button"
-                        disabled={savingRsvp}
-                        onClick={() => setShowAttendanceOptions(true)}
-                        className="flex-1 rounded-full border border-[#B99ACD] bg-[#F2E8F7] px-[2cqw] py-[2.8cqw] text-[3.4cqw] font-medium text-[#75476F] transition hover:bg-[#E8D7F0] active:scale-95 disabled:opacity-60"
+                      <div
+                        className={`flex w-full gap-[2cqw] ${showAttendanceOptions ? "mt-[2cqw]" : ""
+                          }`}
                       >
-                        Sí, asistiré
-                      </button>
-                      <button
-                        type="button"
-                        disabled={savingRsvp}
-                        onClick={() => saveRsvp(false)}
-                        className="flex-1 rounded-full border border-[#E4B4C9] bg-[#FCEAF1] px-[2cqw] py-[2.8cqw] text-[3.4cqw] font-medium text-[#98516F] transition hover:bg-[#F7DCE8] active:scale-95 disabled:opacity-60"
-                      >
-                        No podré asistir
-                      </button>
-                    </div>
-
-                    {showAttendanceOptions && (
-                      <div className="mt-[4cqw] rounded-[4cqw] border border-[#E8D4B0] bg-white/80 p-[3.5cqw]">
-                        <label
-                          htmlFor="attendance-count"
-                          className="block text-[3.6cqw] font-medium text-[#75476F]"
-                        >
-                          ¿Cuántas personas asistirán?
-                        </label>
-                        <select
-                          id="attendance-count"
-                          value={attendanceCount}
-                          onChange={(e) => setAttendanceCount(Number(e.target.value))}
-                          className="mt-[2.5cqw] w-full rounded-xl border border-[#D8B56D] bg-white px-[3cqw] py-[2.5cqw] text-center text-[3.6cqw] text-[#75476F] outline-none focus:ring-2 focus:ring-[#B99ACD]"
-                        >
-                          {Array.from({ length: Math.max(1, guest.max_companions) }, (_, i) => i + 1).map((count) => (
-                            <option key={count} value={count}>
-                              {count} {count === 1 ? "persona" : "personas"}
-                            </option>
-                          ))}
-                        </select>
                         <button
                           type="button"
                           disabled={savingRsvp}
-                          onClick={() => saveRsvp(true, attendanceCount)}
-                          className="mt-[2.5cqw] w-full rounded-full bg-gradient-to-r from-[#C69BCB] to-[#D8B56D] px-[3cqw] py-[2.8cqw] text-[3.4cqw] font-semibold text-white transition hover:opacity-90 active:scale-95 disabled:opacity-60"
+                          onClick={() => setShowAttendanceOptions(true)}
+                          className="flex-1 rounded-full border border-[#B99ACD] bg-[#F2E8F7] px-[2cqw] py-[2.5cqw] text-[3.2cqw] font-medium text-[#75476F] transition hover:bg-[#E8D7F0] active:scale-95 disabled:opacity-60"
                         >
-                          {savingRsvp ? "Guardando..." : "Confirmar asistencia"}
+                          Sí, asistiré
+                        </button>
+                        <button
+                          type="button"
+                          disabled={savingRsvp}
+                          onClick={() => saveRsvp(false)}
+                          className="flex-1 rounded-full border border-[#E4B4C9] bg-[#FCEAF1] px-[2cqw] py-[2.5cqw] text-[3.2cqw] font-medium text-[#98516F] transition hover:bg-[#F7DCE8] active:scale-95 disabled:opacity-60"
+                        >
+                          No podré asistir
                         </button>
                       </div>
-                    )}
-                  </>
-                ) : (
-                  <div className="mt-[4cqw] rounded-[4cqw] border border-[#E8D4B0] bg-white/80 p-[3.5cqw]">
-                    <p className="font-serif text-[4.4cqw] font-semibold text-[#75476F]">
-                      {attendanceResponse === "yes" ? "¡Gracias por confirmar! 💖" : "¡Te extrañaremos!"}
-                    </p>
-                    <p className="mt-[1.5cqw] text-[3.4cqw] text-[#75476F]">{rsvpMessage}</p>
-                  </div>
-                )}
 
-                {attendanceResponse === "pending" && rsvpMessage && (
-                  <p role="alert" className="mt-[2.5cqw] text-[3.4cqw] text-red-700">
-                    {rsvpMessage}
-                  </p>
-                )}
+                      {showAttendanceOptions && (
+                        <div className="mt-[2cqw] rounded-[4cqw] border border-[#E8D4B0] bg-white/80 p-[2.5cqw]">
+                          <p
+                            id="attendance-label"
+                            className="text-[3.2cqw] font-medium text-[#75476F]"
+                          >
+                            ¿Cuántas personas asistirán?
+                          </p>
 
-                <p className="mt-[3cqw] text-[3cqw] text-[#A18478]">
-                  Será un placer compartir este momento contigo.
-                </p>
+                          {/* Selector de número con botones */}
+                          <div
+                            role="radiogroup"
+                            aria-labelledby="attendance-label"
+                            className="mt-[1.5cqw] flex flex-wrap justify-center gap-[2cqw]"
+                          >
+                            {Array.from(
+                              { length: Math.max(1, guest.max_companions) },
+                              (_, i) => i + 1
+                            ).map((count) => {
+                              const selected = attendanceCount === count;
+                              return (
+                                <button
+                                  key={count}
+                                  type="button"
+                                  role="radio"
+                                  aria-checked={selected}
+                                  disabled={savingRsvp}
+                                  onClick={() => setAttendanceCount(count)}
+                                  className={`h-[9cqw] w-[9cqw] rounded-full border font-serif text-[4cqw] transition active:scale-95 disabled:opacity-60 ${selected
+                                    ? "border-[#D8B56D] bg-gradient-to-br from-[#C69BCB] to-[#D8B56D] text-white shadow-md"
+                                    : "border-[#E8D4B0] bg-white text-[#75476F] hover:bg-[#F7EEF9]"
+                                    }`}
+                                >
+                                  {count}
+                                </button>
+                              );
+                            })}
+                          </div>
+
+                          <button
+                            type="button"
+                            disabled={savingRsvp}
+                            onClick={() => saveRsvp(true, attendanceCount)}
+                            className="mt-[2.5cqw] w-full rounded-full bg-gradient-to-r from-[#C69BCB] to-[#D8B56D] px-[3cqw] py-[2.2cqw] text-[3.2cqw] font-semibold text-white transition hover:opacity-90 active:scale-95 disabled:opacity-60"
+                          >
+                            {savingRsvp ? "Guardando..." : "Confirmar asistencia"}
+                          </button>
+                        </div>
+                      )}
+
+                      {rsvpMessage && (
+                        <p role="alert" className="mt-[2cqw] text-[3.2cqw] text-red-700">
+                          {rsvpMessage}
+                        </p>
+                      )}
+
+                      {!showAttendanceOptions && (
+                        <p className="mt-[3cqw] text-[2.8cqw] text-[#A18478]">
+                          Será un placer compartir este momento contigo.
+                        </p>
+                      )}
+                    </>
+                  ) : (
+                    <div className="mt-[4cqw] rounded-[4cqw] border border-[#E8D4B0] bg-white/80 p-[3cqw]">
+                      <p className="font-serif text-[4.2cqw] font-semibold text-[#75476F]">
+                        {attendanceResponse === "yes"
+                          ? "¡Gracias por confirmar! 💖"
+                          : "¡Te extrañaremos!"}
+                      </p>
+                      <p className="mt-[1cqw] text-[3.2cqw] leading-snug text-[#75476F]">
+                        {rsvpMessage}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </div>
             </div>
           </section>
@@ -613,12 +639,7 @@ function HomeContent() {
 
       </main>
 
-      <footer className="relative z-10 mx-auto mt-2 w-full max-w-[620px] px-4 pb-8 pt-5 text-center">
-        <div className="mx-auto mb-3 flex max-w-[180px] items-center gap-3">
-          <span className="h-px flex-1 bg-[#D8B56D]/70" />
-          <span className="text-sm text-[#B58B43]">✦</span>
-          <span className="h-px flex-1 bg-[#D8B56D]/70" />
-        </div>
+      <footer className="relative mt-2 px-4 pb-8 text-center">
         <p className="font-serif text-sm text-[#75476F]">
           Página hecha con cariño por
         </p>
