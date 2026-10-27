@@ -444,7 +444,7 @@ function HomeContent() {
               <div className="space-y-3 rounded-2xl bg-white p-4 text-sm text-[#75476F]">
                 <p><strong>Banco:</strong> Banco Guayaquil</p>
                 <p><strong>Cedula:</strong> 1316913233</p>
-                <p><strong>Titular:</strong> María Solorzano</p>
+                <p><strong>Titular:</strong> María Sol Solórzano</p>
                 <p><strong>Tipo de cuenta:</strong> Ahorros</p>
                 <p><strong>N.º de cuenta:</strong> 62539105</p>
                 <p>
@@ -455,7 +455,7 @@ function HomeContent() {
                     rel="noopener noreferrer"
                     className="font-semibold text-[#B58B43] underline hover:text-[#75476F]"
                   >
-                    098198900
+                    0980198900
                   </a>
                 </p>
               </div>
@@ -617,9 +617,14 @@ function HomeContent() {
         <p className="mt-1 text-xs font-semibold tracking-[0.18em] text-[#A66B91]">
           OC INVITACIONES DIGITALES
         </p>
-        <p className="mt-1 text-xs font-semibold tracking-[0.18em] text-[#A66B91]">
-          +593995528671
-        </p>
+        <a
+          href="https://wa.me/593995528671"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-[#B58B43] underline hover:text-[#75476F]"
+        >
+          0995528671
+        </a>
       </footer>
 
       <MusicPlayer start={introOpen} />
