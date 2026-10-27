@@ -450,7 +450,7 @@ function HomeContent() {
                 <p>
                   <strong>Número para enviar el comprobante:</strong>{" "}
                   <a
-                    href="https://wa.me/59398198900"
+                    href="https://wa.me/593980198900"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="font-semibold text-[#B58B43] underline hover:text-[#75476F]"
