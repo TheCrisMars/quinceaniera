@@ -123,100 +123,144 @@ export default function AdminPage() {
   };
 
   // Save Edit Guest Changes
+
+
   const handleSaveEdit = async () => {
-    if (!editTarget || !editName.trim()) return;
+    if (!editTarget || !editName.trim() || savingEdit) return;
+
     setSavingEdit(true);
 
     try {
-      // 1. Update guest name and max_companions in guests table with .select() to verify rows affected
-      const { data: updatedGuests, error: guestError } = await supabase
+      // 1. Actualizar los datos del invitado y comprobar el resultado.
+      const { data: updatedGuest, error: guestError } = await supabase
         .from("guests")
         .update({
           name: editName.trim(),
           max_companions: Math.max(0, editMaxComp),
         })
         .eq("id", editTarget.id)
-        .select();
+        .select("id");
 
       if (guestError) {
-        console.error("Error al actualizar invitado:", guestError);
-        alert("No se pudo actualizar el invitado: " + guestError.message);
-        setSavingEdit(false);
-        return;
-      }
-
-      if (!updatedGuests || updatedGuests.length === 0) {
-        alert(
-          "⚠️ ATENCIÓN: Supabase bloqueó la actualización por falta de permisos (RLS).\n\n" +
-          "Para solucionarlo, abre Supabase → SQL Editor → New Query y ejecuta:\n\n" +
-          "CREATE POLICY \"guests_update\" ON guests FOR UPDATE USING (true);"
+        throw new Error(
+          `Error al actualizar el invitado: ${guestError.message}`
         );
       }
 
-      // 2. Update RSVP status in rsvps table
+      if (!updatedGuest || updatedGuest.length === 0) {
+        throw new Error(
+          "No se actualizó el invitado. Revisa los permisos RLS de guests."
+        );
+      }
+
+      // 2. Si se seleccionó Pendiente, eliminar su respuesta.
       if (editRsvpStatus === "pending") {
-        // Delete RSVP entry to make it Pending
-        const { error: rsvpDeleteError } = await supabase
+        const { data: deletedRsvp, error: deleteError } = await supabase
           .from("rsvps")
           .delete()
-          .eq("guest_id", editTarget.id);
+          .eq("guest_id", editTarget.id)
+          .select("guest_id");
 
-        if (rsvpDeleteError) {
-          console.error("Error al eliminar RSVP:", rsvpDeleteError);
+        if (deleteError) {
+          throw new Error(
+            `No se pudo eliminar la respuesta: ${deleteError.message}`
+          );
+        }
+
+        if (!deletedRsvp || deletedRsvp.length === 0) {
+          // Verificar si la respuesta todavía existe.
+          const { data: remainingRsvp, error: checkError } = await supabase
+            .from("rsvps")
+            .select("guest_id")
+            .eq("guest_id", editTarget.id)
+            .maybeSingle();
+
+          if (checkError) {
+            throw new Error(
+              `No se pudo verificar el estado: ${checkError.message}`
+            );
+          }
+
+          if (remainingRsvp) {
+            throw new Error(
+              "La respuesta sigue guardada. Supabase no permitió eliminarla. Revisa las políticas RLS de DELETE en rsvps."
+            );
+          }
         }
       } else {
-        const isConfirmed = editRsvpStatus === "confirmed";
-        const maxAllowedAttending = editMaxComp + 1;
-        const validAttending = Math.min(editAttendingCount, maxAllowedAttending);
-        const companionsCount = isConfirmed ? Math.max(0, validAttending - 1) : 0;
+        // 3. Guardar Confirmado o No asistirá.
+        const confirmed = editRsvpStatus === "confirmed";
+        const maxAllowed = Math.max(1, editMaxComp + 1);
+        const attendingCount = confirmed
+          ? Math.min(Math.max(1, editAttendingCount), maxAllowed)
+          : 0;
 
-        // Check if an RSVP record already exists for this guest
-        const { data: existingRsvp } = await supabase
+        const payload = {
+          guest_id: editTarget.id,
+          confirmed,
+          companions_count: confirmed ? attendingCount - 1 : 0,
+          message: null,
+        };
+
+        const { data: existingRsvp, error: lookupError } = await supabase
           .from("rsvps")
           .select("id")
           .eq("guest_id", editTarget.id)
           .maybeSingle();
 
-        if (existingRsvp) {
-          const { error: rsvpUpdateError } = await supabase
-            .from("rsvps")
-            .update({
-              confirmed: isConfirmed,
-              companions_count: companionsCount,
-              message: null,
-            })
-            .eq("guest_id", editTarget.id);
+        if (lookupError) {
+          throw new Error(
+            `Error al consultar la respuesta: ${lookupError.message}`
+          );
+        }
 
-          if (rsvpUpdateError) {
-            console.error("Error al actualizar RSVP:", rsvpUpdateError);
-            alert("No se pudo actualizar la confirmación: " + rsvpUpdateError.message);
+        if (existingRsvp) {
+          const { data: updatedRsvp, error: updateError } = await supabase
+            .from("rsvps")
+            .update(payload)
+            .eq("guest_id", editTarget.id)
+            .select("id");
+
+          if (updateError) {
+            throw new Error(
+              `Error al actualizar la respuesta: ${updateError.message}`
+            );
+          }
+
+          if (!updatedRsvp || updatedRsvp.length === 0) {
+            throw new Error(
+              "No se actualizó la respuesta. Revisa las políticas RLS de UPDATE en rsvps."
+            );
           }
         } else {
-          const { error: rsvpInsertError } = await supabase
+          const { error: insertError } = await supabase
             .from("rsvps")
-            .insert({
-              guest_id: editTarget.id,
-              confirmed: isConfirmed,
-              companions_count: companionsCount,
-              message: null,
-            });
+            .insert(payload);
 
-          if (rsvpInsertError) {
-            console.error("Error al crear RSVP:", rsvpInsertError);
-            alert("No se pudo crear la confirmación: " + rsvpInsertError.message);
+          if (insertError) {
+            throw new Error(
+              `Error al registrar la respuesta: ${insertError.message}`
+            );
           }
         }
       }
 
-      setEditTarget(null);
+      // 4. Recargar los datos y cerrar el modal solo si todo salió bien.
       await fetchGuests();
-    } catch (err: any) {
-      console.error("Unexpected edit error:", err);
-      alert("Ocurrió un error al guardar los cambios.");
+      setEditTarget(null);
+    } catch (error) {
+      console.error("Error al guardar los cambios:", error);
+
+      alert(
+        error instanceof Error
+          ? error.message
+          : "Ocurrió un error inesperado."
+      );
     } finally {
       setSavingEdit(false);
     }
   };
+
 
   // Confirm Delete Guest
   const confirmDelete = async () => {

@@ -1,3 +1,4 @@
+
 "use client";
 
 import Image from "next/image";
@@ -10,43 +11,53 @@ const photos = [
     { src: "/images/galeria/foto-3.jpeg", alt: "Recuerdo 3" },
 ];
 
-const INTERVAL = 5000; // 5 segundos
+const INTERVAL = 5000;
 
 export default function PhotoGallery() {
     const [current, setCurrent] = useState(0);
     const [paused, setPaused] = useState(false);
     const touchStart = useRef(0);
 
-    const previous = () =>
+    const previous = () => {
         setCurrent((i) => (i === 0 ? photos.length - 1 : i - 1));
+    };
 
-    const next = () => setCurrent((i) => (i + 1) % photos.length);
+    const next = () => {
+        setCurrent((i) => (i + 1) % photos.length);
+    };
 
-    // Autoplay: se reinicia cada vez que cambia la foto (también al mover a mano)
     useEffect(() => {
         if (paused) return;
-        const id = setTimeout(next, INTERVAL);
+
+        const id = setTimeout(() => {
+            setCurrent((i) => (i + 1) % photos.length);
+        }, INTERVAL);
+
         return () => clearTimeout(id);
     }, [current, paused]);
 
     return (
         <div
-            className="relative h-full w-full overflow-hidden touch-pan-y"
+            className="relative h-full w-full overflow-hidden touch-pan-y select-none"
             onMouseEnter={() => setPaused(true)}
             onMouseLeave={() => setPaused(false)}
             onTouchStart={(e) => {
-                setPaused(true);
                 touchStart.current = e.touches[0].clientX;
+                setPaused(true);
             }}
+
             onTouchEnd={(e) => {
-                const diff = touchStart.current - e.changedTouches[0].clientX;
+                const diff =
+                    touchStart.current - e.changedTouches[0].clientX;
+
                 if (Math.abs(diff) > 45) {
-                    diff > 0 ? next() : previous();
+                    if (diff > 0) next();
+                    else previous();
                 }
+
                 setPaused(false);
             }}
         >
-            {/* Todas las fotos apiladas, solo la actual es visible */}
             {photos.map((photo, index) => (
                 <Image
                     key={photo.src}
@@ -80,9 +91,25 @@ export default function PhotoGallery() {
                 <ChevronRight size={20} />
             </button>
 
-            <span className="absolute bottom-2 right-2 z-10 rounded-full bg-black/50 px-2 py-0.5 text-xs text-white">
-                {current + 1}/{photos.length}
-            </span>
+
+            {/* Indicador moderno de fotos */}
+            <div className="absolute bottom-3 right-3 z-20
+    flex items-center gap-2 rounded-full
+    border border-white/30 bg-black/35
+    px-3 py-1.5 text-white shadow-lg
+    backdrop-blur-md sm:bottom-5 sm:right-5">
+
+                <span className="text-sm font-semibold tabular-nums">
+                    {String(current + 1).padStart(2, "0")}
+                </span>
+
+                <span className="h-3 w-px bg-white/50" />
+
+                <span className="text-xs font-medium text-white/75 tabular-nums">
+                    {String(photos.length).padStart(2, "0")}
+                </span>
+            </div>
+
         </div>
     );
 }
