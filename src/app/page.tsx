@@ -515,7 +515,7 @@ function HomeContent() {
                   </p>
 
                   <p className="font-serif text-[10cqw] leading-none text-[#B58B43]">
-                    {guest.max_companions}
+                    {guest.max_companions + 1}
                   </p>
 
                   <p className="font-serif text-[5.5cqw] tracking-[0.18em] text-[#75476F]">
